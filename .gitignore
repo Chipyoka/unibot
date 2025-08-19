@@ -1,2 +1,6 @@
 STRATEGY.md
 notes/
+node_modules
+
+.env.*
+.env
