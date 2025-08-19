@@ -367,18 +367,6 @@ RATE_LIMIT_MAX=100
 
 ## Deployment Strategy
 
-### 1. Database Hosting Options
-
-- **PlanetScale**: Free tier, MySQL compatible, branching
-- **Railway**: Integrated with app hosting
-- **ClearDB**: Heroku MySQL addon
-
-### 2. Application Hosting
-
-- **Railway**: Easy deployment, free tier
-- **Render**: Good free tier, auto-deploys from Git
-- **Heroku**: Classic option, limited free tier
-
 ### 3. Deployment Configuration
 
 ```json
