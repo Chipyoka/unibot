@@ -7,7 +7,8 @@ router.use(authMiddleware);
 
 router.post('/start', chatController.startSession);
 router.post('/send', chatController.sendMessage);
-router.get('/history/:sessionId', chatController.getHistory);
+router.get('/history', authMiddleware, chatController.getHistory); // Get all sessions
+router.get('/history/:sessionId', authMiddleware, chatController.getSessionMessages); // Get messages for a specific session
 router.post('/end/:sessionId', chatController.endSession);
 
 module.exports = router;

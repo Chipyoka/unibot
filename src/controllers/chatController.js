@@ -69,27 +69,91 @@ module.exports = {
     }
   },
 
-  // Fetch chat history
-  async getHistory(req, res) {
-    try {
-      const { sessionId } = req.params;
+ // Fetch all chat sessions with their messages for a user
+// Fetch all chat sessions with optimized query
+async getHistory(req, res) {
+  try {
+    const sessions = await ChatSession.findAll({
+      where: { userId: req.user.sub },
+      order: [['createdAt', 'DESC']],
+    });
 
-      const session = await ChatSession.findOne({
-        where: { id: sessionId, userId: req.user.sub }
-      });
-      if (!session) return res.status(404).json({ error: 'Session not found' });
+    const sessionsWithDetails = await Promise.all(
+      sessions.map(async (session) => {
+        // Get first student message for title
+        const firstMessage = await Message.findOne({
+          where: { 
+            sessionId: session.id,
+            sender: 'student'
+          },
+          order: [['createdAt', 'ASC']]
+        });
 
-      const messages = await Message.findAll({
-        where: { sessionId },
-        order: [['createdAt', 'ASC']]
-      });
+        // Get message count
+        const messageCount = await Message.count({
+          where: { sessionId: session.id }
+        });
 
-      return res.json({ session, messages });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to fetch history' });
+        let title = `Session #${session.id}`;
+        if (firstMessage) {
+          const words = firstMessage.text.split(' ');
+          title = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+        }
+
+        return {
+          id: session.id,
+          userId: session.userId,
+          status: session.status,
+          startedAt: session.startedAt,
+          endedAt: session.endedAt,
+          createdAt: session.createdAt,
+          updatedAt: session.updatedAt,
+          title,
+          messageCount
+        };
+      })
+    );
+
+    return res.json({ sessions: sessionsWithDetails });
+  } catch (err) {
+    console.error('Error fetching chat history:', err);
+    return res.status(500).json({ error: 'Failed to fetch history' });
+  }
+},
+
+// Fetch messages for a specific session
+async getSessionMessages(req, res) {
+  try {
+    const { sessionId } = req.params;
+
+    // Verify the session belongs to the user
+    const session = await ChatSession.findOne({
+      where: { id: sessionId, userId: req.user.sub }
+    });
+    
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
     }
-  },
+
+    const messages = await Message.findAll({
+      where: { sessionId },
+      order: [['createdAt', 'ASC']]
+    });
+
+    return res.json({ 
+      session: {
+        id: session.id,
+        status: session.status,
+        startedAt: session.startedAt,
+        endedAt: session.endedAt
+      },
+      messages 
+    });
+  } catch (err) {
+    console.error('Error fetching session messages:', err);
+    return res.status(500).json({ error: 'Failed to fetch session messages' });
+  }
+},
 
   // End chat session
   async endSession(req, res) {
