@@ -18,6 +18,7 @@ app.get('/health', (req, res) => res.status(200).json({ status: 'ok', env: env.n
 
 // Routes
 app.use('/api/v1/auth', require('./routes/auth'));
+app.use('/api/v1/chat', require('./routes/chat'));
 
 // Boot
 async function start() {

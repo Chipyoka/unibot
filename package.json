@@ -6,7 +6,7 @@
   "directories": {
     "test": "tests"
   },
- "scripts": {
+  "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/app.js",
     "start": "cross-env NODE_ENV=production node src/app.js",
     "lint": "eslint .",
@@ -15,7 +15,7 @@
     "db:seed": "sequelize db:seed:all",
     "db:undo": "sequelize db:migrate:undo",
     "db:reset": "sequelize db:migrate:undo:all && sequelize db:migrate && sequelize db:seed:all"
- },
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

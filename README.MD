@@ -1,4 +1,4 @@
-Depression Detection AI System for Zambian University Students
+# Depression Detection AI System for Zambian University Students
 
 ### Tech Stack
 
