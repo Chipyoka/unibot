@@ -5,11 +5,14 @@ module.exports = {
   // 1. Session overview
   async sessionOverview(req, res) {
     try {
-      const total = await ChatSession.count({ where: { userId: req.user.sub } });
-      const active = await ChatSession.count({ where: { userId: req.user.sub, status: 'active' } });
+      // select all sessions
+      const all = await ChatSession.findAll();
+
+      const total = await ChatSession.count({ all });
+      const active = await ChatSession.count({ where: { status: 'active' } });
       const closed = total - active;
 
-      return res.json({ total, active, closed });
+      return res.json({ all, total, active, closed });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: 'Failed to get session overview' });
@@ -22,7 +25,7 @@ module.exports = {
       const { sessionId } = req.params;
 
       const session = await ChatSession.findOne({
-        where: { id: sessionId, userId: req.user.sub }
+        where: { id: sessionId }
       });
       if (!session) return res.status(404).json({ error: 'Session not found' });
 
@@ -42,7 +45,7 @@ module.exports = {
       const { sessionId } = req.params;
 
       const session = await ChatSession.findOne({
-        where: { id: sessionId, userId: req.user.sub }
+        where: { id: sessionId}
       });
       if (!session) return res.status(404).json({ error: 'Session not found' });
 
