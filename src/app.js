@@ -27,6 +27,9 @@ async function start() {
   try {
     await sequelize.authenticate();
     console.log('DB connection established');
+
+    // log node env
+    console.log(`Running in ${env.nodeEnv} mode`);
     app.listen(env.port, () => console.log(`API listening on :${env.port}`));
   } catch (err) {
     console.error('Failed to start', err);
