@@ -1,12 +1,30 @@
-
-
-
 const { Sequelize } = require('sequelize');
 const dbCfg = require('../config/db');
 const env = require('../config/environment');
 
-const cfg = dbCfg[env.nodeEnv] || dbCfg.development;
-const sequelize = new Sequelize(cfg.database, cfg.username, cfg.password, cfg);
+let sequelize;
+
+// Use full DATABASE_URL in production (Render)
+if (env.nodeEnv === 'production') {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL must be set in production');
+  }
+
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  });
+} else {
+  // Development / Test
+  const cfg = dbCfg[env.nodeEnv] || dbCfg.development;
+  sequelize = new Sequelize(cfg.database, cfg.username, cfg.password, cfg);
+}
 
 // Models
 const User = require('./User')(sequelize);
@@ -25,4 +43,12 @@ Message.belongsTo(ChatSession, { foreignKey: 'sessionId' });
 User.hasMany(DepressionAssessment, { foreignKey: 'userId' });
 DepressionAssessment.belongsTo(User, { foreignKey: 'userId' });
 
-module.exports = { sequelize, Sequelize, User, ChatSession, Message, DepressionAssessment, RevokedToken };
+module.exports = {
+  sequelize,
+  Sequelize,
+  User,
+  ChatSession,
+  Message,
+  DepressionAssessment,
+  RevokedToken
+};
