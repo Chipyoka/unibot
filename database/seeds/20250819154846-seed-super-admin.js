@@ -8,7 +8,7 @@ module.exports = {
 
     await queryInterface.bulkInsert('users', [
       {
-        email: 'admin@unibot.com',
+        email: 'admin@themchar.com',
         password_hash: passwordHash,
         full_name: 'Super Admin',
         role: 'admin',
@@ -20,6 +20,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('users', { email: 'admin@unibot.com' });
+    await queryInterface.bulkDelete('users', { email: 'admin@themchar.com' });
   }
 };

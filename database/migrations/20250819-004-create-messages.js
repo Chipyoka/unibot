@@ -8,7 +8,7 @@ module.exports = {
       sender: { type: Sequelize.ENUM('user','student', 'bot'), allowNull: false },
       text: { type: Sequelize.TEXT, allowNull: false },
       sentiment: { type: Sequelize.STRING, allowNull: true },
-      sentiment_score: { type: Sequelize.INTEGER.UNSIGNED, allowNull: true },
+      sentiment_score: { type: Sequelize.FLOAT, allowNull: true },
       created_at: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn('NOW') },
       updated_at: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn('NOW') }
     });
